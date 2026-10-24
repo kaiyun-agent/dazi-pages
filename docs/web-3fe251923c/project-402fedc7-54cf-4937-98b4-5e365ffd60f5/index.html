@@ -27,7 +27,7 @@
 <div class="scene-toolbar"><div class="tool-group"><button id="overview" disabled>全球总览</button><button id="locate" disabled>定位目标</button><button id="track" aria-pressed="false" disabled>跟踪</button></div><div class="tool-group"><label><input id="orbits" type="checkbox" checked>轨道</label><label><input id="grid" type="checkbox" checked>经纬网</label><label><input id="links" type="checkbox" checked>可见链路</label></div></div>
 <div id="map-stage" class="map-stage">
 <canvas id="scene" aria-label="Cesium 三维星地态势，使用鼠标拖动旋转、滚轮缩放" tabindex="0"></canvas>
-<div id="engine-gate" class="engine-gate"><div class="gate-mark">◎</div><h3>Cesium 三维场景</h3><p>当前附件未包含 Cesium 运行库。选择官方发行包中的 <b>Build/Cesium/Cesium.js</b>，在浏览器本地启用场景。</p><label class="load-button">选择本地 Cesium.js<input id="engine-file" type="file" accept=".js,text/javascript,application/javascript"></label><p class="gate-note">仅执行你信任的官方脚本 · 文件不上传<br>不使用 CDN、Token 或其他三维引擎</p><p id="engine-error" role="alert"></p></div>
+<div id="engine-gate" class="engine-gate"><div class="gate-mark">◎</div><h3>Cesium 三维场景</h3><p>正在自动加载三维引擎并初始化地球、轨道和地面站…</p><button id="retry-engine">重新加载场景</button><p id="engine-error" role="alert"></p></div>
 <div id="scene-help" class="scene-help" hidden>拖动旋转 · 滚轮缩放 · 点击卫星选择</div>
 <div class="scene-legend"><span><i class="dot satellite-dot"></i>卫星</span><span><i class="dot"></i>地面站</span><span class="future">━ 未来轨道</span><span class="history">━ 历史轨道</span></div>
 <div class="scene-tag">WGS84 · 模拟圆轨道 / 非实际预报</div>
