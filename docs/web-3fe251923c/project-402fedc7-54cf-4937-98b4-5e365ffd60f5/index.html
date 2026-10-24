@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>遥感测控运行中心</title>
+<title>遥感测控运行中心 · Cesium</title>
 <link rel="stylesheet" href="./styles.css">
 <script defer src="./app.js"></script>
 </head>
@@ -23,31 +23,28 @@
 <section class="panel station-panel"><div class="panel-heading"><h2>地面站网络</h2><span>全部在线 · 模拟</span></div><div id="stations"></div></section>
 </aside>
 <section class="panel map-panel">
-<div class="panel-heading"><h2>星地态势</h2><span>轨道与位置示意</span></div>
-<div class="map-stage">
-<svg viewBox="0 0 900 510" role="img" aria-labelledby="map-title map-desc">
-<title id="map-title">卫星与地面站示意</title><desc id="map-desc">非真实地理底图，轨道和连接线不表示实际位置、轨道或可见性。</desc>
-<defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M50 0H0V50" fill="none" stroke="#173447"/></pattern><radialGradient id="glow"><stop offset="0" stop-color="#125268" stop-opacity=".5"/><stop offset="1" stop-color="#081823" stop-opacity="0"/></radialGradient></defs>
-<rect width="900" height="510" fill="url(#grid)"/><ellipse cx="450" cy="255" rx="410" ry="235" fill="url(#glow)"/>
-<g fill="#153847" stroke="#2c5967" stroke-width="1.5"><path d="M125 160 180 110 260 100 310 140 295 180 340 215 310 260 250 240 225 190 170 205Z"/><path d="M290 280 340 290 365 345 340 405 315 438 295 375 275 325Z"/><path d="M410 150 480 120 540 145 600 110 695 145 760 195 725 240 650 250 615 295 560 265 525 210 470 225 440 190Z"/><path d="M450 240 510 250 540 300 510 365 470 350 440 285Z"/><path d="M690 350 745 335 790 370 765 405 700 395Z"/></g>
-<ellipse cx="450" cy="255" rx="350" ry="120" transform="rotate(-25 450 255)" fill="none" stroke="#3ddac4" stroke-opacity=".65" stroke-dasharray="7 7"/><ellipse cx="450" cy="255" rx="310" ry="175" transform="rotate(22 450 255)" fill="none" stroke="#3986cc" stroke-opacity=".5"/>
-<path id="station-link" fill="none" stroke="#4be2c5" stroke-width="1.5" stroke-dasharray="5 5"/>
-<g fill="#47dec3"><g transform="translate(300 230)"><circle r="13" opacity=".12"/><circle r="5"/><text x="13" y="5">喀什站</text></g><g transform="translate(650 205)"><circle r="13" opacity=".12"/><circle r="5"/><text x="13" y="5">密云站</text></g><g transform="translate(585 365)"><circle r="13" opacity=".12"/><circle r="5"/><text x="13" y="5">三亚站</text></g></g>
-<g id="sat-marker"><circle r="23" fill="#4be2c5" opacity=".1"/><path d="M-8 0 0-8 8 0 0 8Z" fill="#7fffe2"/><text id="marker-label" x="17" y="-7">RS-01</text><text x="17" y="13" class="svg-note">选中卫星示意标记</text></g>
-</svg>
-<div class="map-caption"><span><i class="status-dot"></i> 地面站</span><span class="green">— 轨道示意</span><span>非真实地理底图 / 链路</span></div>
+<div class="panel-heading"><h2>星地三维态势</h2><span id="engine-status">Cesium 引擎待载入</span></div>
+<div class="scene-toolbar"><div class="tool-group"><button id="overview" disabled>全球总览</button><button id="locate" disabled>定位目标</button><button id="track" aria-pressed="false" disabled>跟踪</button></div><div class="tool-group"><label><input id="orbits" type="checkbox" checked>轨道</label><label><input id="grid" type="checkbox" checked>经纬网</label><label><input id="links" type="checkbox" checked>可见链路</label></div></div>
+<div id="map-stage" class="map-stage">
+<canvas id="scene" aria-label="Cesium 三维星地态势，使用鼠标拖动旋转、滚轮缩放" tabindex="0"></canvas>
+<div id="engine-gate" class="engine-gate"><div class="gate-mark">◎</div><h3>Cesium 三维场景</h3><p>当前附件未包含 Cesium 运行库。选择官方发行包中的 <b>Build/Cesium/Cesium.js</b>，在浏览器本地启用场景。</p><label class="load-button">选择本地 Cesium.js<input id="engine-file" type="file" accept=".js,text/javascript,application/javascript"></label><p class="gate-note">仅执行你信任的官方脚本 · 文件不上传<br>不使用 CDN、Token 或其他三维引擎</p><p id="engine-error" role="alert"></p></div>
+<div id="scene-help" class="scene-help" hidden>拖动旋转 · 滚轮缩放 · 点击卫星选择</div>
+<div class="scene-legend"><span><i class="dot satellite-dot"></i>卫星</span><span><i class="dot"></i>地面站</span><span class="future">━ 未来轨道</span><span class="history">━ 历史轨道</span></div>
+<div class="scene-tag">WGS84 · 模拟圆轨道 / 非实际预报</div>
 </div>
+<div class="time-controls"><button id="play" aria-pressed="false" disabled>暂停</button><select id="speed" aria-label="模拟时间倍率" disabled><option value="1">×1</option><option value="2">×2</option><option value="5">×5</option><option value="10">×10</option></select><input id="timeline" type="range" min="0" max="7200" value="0" step="1" aria-label="模拟时间，距起点秒数" disabled><button id="reset-time" disabled>回到起点</button><time id="simulation-time">—</time></div>
 <div class="map-footer"><div><small>当前目标</small><b id="current-target"></b></div><div><small>关联地面站</small><b id="current-station"></b></div><div><small>任务状态</small><b id="current-state" class="green"></b></div></div>
+<div class="position-strip"><span id="position">位置待场景初始化</span><span id="visibility">可见性待计算</span></div>
 </section>
 <aside class="right-column">
-<section class="panel telemetry"><div class="panel-heading"><h2>实时遥测</h2><button id="pause" class="text-button" type="button" aria-pressed="false">暂停模拟</button></div><div class="target-label"><b id="telemetry-id">RS-01</b><span id="simulation-state">每秒模拟更新</span></div><div class="metric"><span>电池电量</span><b><span id="battery">92</span><small>%</small></b></div><div class="progress" id="battery-meter" role="progressbar" aria-label="模拟电池电量" aria-valuemin="0" aria-valuemax="100" aria-valuenow="92"><span id="battery-bar"></span></div><div class="metric"><span>舱内温度</span><b><span id="temperature">24.6</span><small>℃</small></b></div><div class="metric"><span>数传速率</span><b><span id="rate">0</span><small>Mbps</small></b></div><div class="chart-label">信号趋势 · 示意 / 非历史采样</div><svg class="waveform" viewBox="0 0 300 100" role="img" aria-label="模拟信号趋势"><path d="M0 25H300 M0 50H300 M0 75H300" stroke="#183344"/><polyline id="wave" fill="none" stroke="#47dec3" stroke-width="2"/></svg></section>
+<section class="panel telemetry"><div class="panel-heading"><h2>实时遥测</h2><button id="pause" class="text-button" type="button" aria-pressed="false">暂停模拟</button></div><div class="target-label"><b id="telemetry-id">RS-01</b><span id="simulation-state">每秒模拟更新</span></div><div class="metric"><span>电池电量</span><b><span id="battery">92</span><small>%</small></b></div><div class="progress" id="battery-meter" role="progressbar" aria-label="模拟电池电量" aria-valuemin="0" aria-valuemax="100" aria-valuenow="92"><span id="battery-bar"></span></div><div class="metric"><span>舱内温度</span><b><span id="temperature">24.6</span><small>℃</small></b></div><div class="metric"><span>数传速率</span><b><span id="rate">0</span><small>Mbps</small></b></div><div class="chart-label">信号趋势 · 示意 / 非历史采样</div><svg class="waveform" viewBox="0 0 300 100" role="img" aria-label="模拟信号趋势"><path d="M0 25H300 M0 50H300 M0 75H300" stroke="#20313e"/><polyline id="wave" fill="none" stroke="#64c9b2" stroke-width="2"/></svg></section>
 <section class="panel alerts"><div class="panel-heading"><h2>运行告警</h2><span id="pending-label">2 待确认</span></div><div id="alerts"></div></section>
 </aside>
 </section>
 <section class="panel tasks"><div class="panel-heading"><h2>测控任务计划</h2><span>固定模拟窗口 · UTC · 非当日预报</span></div><div class="table-scroll" tabindex="0" role="region" aria-label="测控任务表，可横向滚动"><table><thead><tr><th scope="col">任务编号</th><th scope="col">卫星</th><th scope="col">地面站</th><th scope="col">过站窗口</th><th scope="col">任务进度</th><th scope="col">状态</th></tr></thead><tbody id="tasks"></tbody></table></div></section>
-<footer class="page-footer"><span>演示环境 · 无真实测控指令下发能力</span><span>数据来源：本地模拟数据 · 告警刷新后重置</span></footer>
+<footer class="page-footer"><span>演示环境 · 无真实测控指令下发能力</span><span>本地模拟数据 · 告警刷新后重置 · 未接入影像及真实轨道</span></footer>
 <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
-<noscript><p class="noscript">请启用 JavaScript 以使用卫星切换、模拟遥测和告警确认。</p></noscript>
+<noscript><p class="noscript">请启用 JavaScript 以使用交互和 Cesium 场景。</p></noscript>
 </main>
 </body>
 </html>
