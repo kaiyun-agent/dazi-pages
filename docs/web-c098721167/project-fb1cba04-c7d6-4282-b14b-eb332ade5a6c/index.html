@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><script type="importmap">{"imports":{"creatspace-visual":"./vendor/sdk-0/dist/index.js","h3-js":"https://cdn.jsdelivr.net/npm/h3-js@4.5.0/+esm","s2js":"https://cdn.jsdelivr.net/npm/s2js@1.44.0/+esm","xgis-bdgrid":"https://cdn.jsdelivr.net/npm/xgis-bdgrid@0.1.3/+esm"}}</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>三维卫星任务规划</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.139.1/Build/Cesium/Widgets/widgets.css">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<header><div class="brand">◈ <strong>卫星任务规划</strong><span>MISSION PLANNING / 3D</span></div><div><span class="badge">模拟数据</span><span id="status" role="status">正在加载三维运行环境…</span></div></header>
+<main>
+<aside class="left"><section><div class="section-title"><h2>规划工作区</h2><span>01 / RESOURCES</span></div><p class="muted">选资源 → 分析窗口 → 生成方案 → 仿真回放</p><label>资源搜索<input id="search" placeholder="输入卫星名称"></label><div id="satellites"></div></section>
+<section><div class="section-title"><h2>观测目标</h2><span>02 / TARGETS</span></div><div id="targets"></div><div class="row"><button id="pickTarget">＋ 地图添加目标</button><button id="cancelPick">取消</button></div><p class="muted">目标按 20 km × 20 km 演示区域处理。</p></section>
+<section><h2>规划约束</h2><label>最大侧摆角 <output id="rollValue">35°</output><input id="roll" type="range" min="5" max="45" value="35"></label><label>单次成像时长<select id="duration"><option value="20">20 秒</option><option value="40">40 秒</option><option value="60">60 秒</option></select></label><label>排序策略<select id="strategy"><option value="priority">目标优先级优先</option><option value="early">最早窗口优先</option></select></label><p class="muted">分析范围 30 分钟 · 幅宽 100 km<br>同星任务间隔至少 60 秒 · 每目标一次成像</p><button class="primary wide" id="analyze">分析过境窗口</button></section>
+</aside>
+<div class="scene"><div id="globe"></div><div class="scene-top"><div><span class="eyebrow">ORBITAL OPERATIONS</span><h1>空间态势与任务预演</h1><p>WGS84 / UTC · 简化圆轨道演示</p></div><div class="tools"><button id="home">全球总览</button><button id="mode">切换二维</button><button id="track">跟踪选中卫星</button></div></div><div id="error" role="alert" hidden></div><div class="scene-bottom"><span><i class="dot cyan"></i>卫星 / 未来轨迹</span><span><i class="dot dim"></i>历史轨迹</span><span><i class="dot orange"></i>目标区域</span><span><i class="dot green"></i>SDK 扫描条带</span></div><div id="hint">拖动旋转 · 滚轮缩放 · 点击卫星查看详情</div></div>
+<aside class="right"><section><div class="section-title"><h2>卫星详情</h2><span>LIVE SIM</span></div><div id="details">等待场景初始化</div><label><input id="orbitVisible" type="checkbox" checked> 显示轨迹</label><label><input id="groundVisible" type="checkbox" checked> 显示星下轨迹</label></section><section><div class="section-title"><h2>候选窗口</h2><span id="windowCount">0</span></div><div id="windows" class="scroll"><p class="muted">完成窗口分析后显示可用资源。</p></div><button class="primary wide" id="plan">生成演示方案</button></section><section><div class="section-title"><h2>任务序列</h2><span id="planCount">0</span></div><div id="summary" class="muted">尚未生成方案</div><div id="tasks" class="scroll"></div><div class="row"><button id="execute">仿真回放</button><button id="export">导出方案</button></div><p id="sdk" class="muted">组件：等待加载</p></section></aside>
+</main>
+<footer><button id="play">暂停</button><button id="reset">回到起点</button><select id="speed"><option value="1">×1</option><option value="10">×10</option><option value="60" selected>×60</option><option value="120">×120</option></select><div class="timeline"><div class="row spread"><span>2026-10-30 00:00 UTC</span><strong id="time">00:00:00</strong><span>00:30 UTC</span></div><input id="seek" type="range" min="0" max="1800" step="1" value="0" aria-label="仿真时间"></div></footer>
+<script type="module" src="app.js"></script>
+</body></html>
